@@ -5,6 +5,8 @@
  */
 class PEAR5
 {
+    private static $properties = array();
+
     /**
     * If you have a class that's mostly/entirely static, and you need static
     * properties, you can use this method to simulate them. Eg. in your method(s)
@@ -17,17 +19,16 @@ class PEAR5
     * @return mixed   A reference to the variable. If not set it will be
     *                 auto initialised to NULL.
     */
-    static function &getStaticProperty($class, $var)
+    public static function &getStaticProperty($class, $var)
     {
-        static $properties;
-        if (!isset($properties[$class])) {
-            $properties[$class] = array();
+        if (!isset(self::$properties[$class])) {
+            self::$properties[$class] = array();
         }
 
-        if (!array_key_exists($var, $properties[$class])) {
-            $properties[$class][$var] = null;
+        if (!array_key_exists($var, self::$properties[$class])) {
+            self::$properties[$class][$var] = null;
         }
 
-        return $properties[$class][$var];
+        return self::$properties[$class][$var];
     }
 }
