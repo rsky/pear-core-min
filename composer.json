@@ -1,7 +1,7 @@
 {
     "name": "rsky/pear-core-min",
     "description": "The minimum subset of https://github.com/pear/pear-core",
-    "homepage": "https://github.com/rsky/pear-core",
+    "homepage": "https://github.com/rsky/pear-core-min",
     "license": ["BSD-2-Clause", "PHP-3.0"],
     "autoload": {
         "classmap": ["/"]
