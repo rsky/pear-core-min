@@ -204,7 +204,7 @@ class PEAR
     */
     public static function &getStaticProperty($class, $var)
     {
-        $property = PEAR5::getStaticProperty($class, $var);
+        $property = &PEAR5::getStaticProperty($class, $var);
         return $property;
     }
 
