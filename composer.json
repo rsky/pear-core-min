@@ -11,7 +11,7 @@
         "exclude": ["/INSTALL", "/LICENSE", "/README"]
     },
     "require": {
-        "php": ">=4.4.0"
+        "php": ">=5.0.0"
     },
     "replace": {
         "pear-pear.php.net/PEAR": "1.9.4",
