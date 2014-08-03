@@ -26,7 +26,7 @@ if (!extension_loaded("overload")) {
 /**
  * Include for PEAR_Error and PEAR classes
  */
-require_once "PEAR.php";
+require_once 'PEAR.php';
 
 /**
  * This class is for objects where you want to separate the code for
@@ -61,7 +61,7 @@ class PEAR_Autoloader extends PEAR
      *
      * @access private
      */
-    var $_autoload_map = array();
+    public $_autoload_map = array();
 
     /**
      * Map of methods and aggregate objects
@@ -70,7 +70,7 @@ class PEAR_Autoloader extends PEAR
      *
      * @access private
      */
-    var $_method_map = array();
+    public $_method_map = array();
 
     // }}}
     // {{{ addAutoload()
@@ -78,20 +78,20 @@ class PEAR_Autoloader extends PEAR
     /**
      * Add one or more autoload entries.
      *
-     * @param string $method     which method to autoload
+     * @param string $method which method to autoload
      *
-     * @param string $classname  (optional) which class to find the method in.
-     *                           If the $method parameter is an array, this
-     *                           parameter may be omitted (and will be ignored
-     *                           if not), and the $method parameter will be
-     *                           treated as an associative array with method
-     *                           names as keys and class names as values.
+     * @param string $classname (optional) which class to find the method in.
+     *                          If the $method parameter is an array, this
+     *                          parameter may be omitted (and will be ignored
+     *                          if not), and the $method parameter will be
+     *                          treated as an associative array with method
+     *                          names as keys and class names as values.
      *
      * @return void
      *
      * @access public
      */
-    function addAutoload($method, $classname = null)
+    public function addAutoload($method, $classname = null)
     {
         if (is_array($method)) {
             array_walk($method, create_function('$a,&$b', '$b = strtolower($b);'));
@@ -107,17 +107,18 @@ class PEAR_Autoloader extends PEAR
     /**
      * Remove an autoload entry.
      *
-     * @param string $method  which method to remove the autoload entry for
+     * @param string $method which method to remove the autoload entry for
      *
      * @return bool TRUE if an entry was removed, FALSE if not
      *
      * @access public
      */
-    function removeAutoload($method)
+    public function removeAutoload($method)
     {
         $method = strtolower($method);
         $ok = isset($this->_autoload_map[$method]);
         unset($this->_autoload_map[$method]);
+
         return $ok;
     }
 
@@ -131,13 +132,13 @@ class PEAR_Autoloader extends PEAR
      * aggregated, except private ones (name starting with an
      * underscore) and constructors.
      *
-     * @param string $classname  what class to instantiate for the object.
+     * @param string $classname what class to instantiate for the object.
      *
      * @return void
      *
      * @access public
      */
-    function addAggregateObject($classname)
+    public function addAggregateObject($classname)
     {
         $classname = strtolower($classname);
         if (!class_exists($classname)) {
@@ -160,13 +161,13 @@ class PEAR_Autoloader extends PEAR
     /**
      * Remove an aggregate object.
      *
-     * @param string $classname  the class of the object to remove
+     * @param string $classname the class of the object to remove
      *
-     * @return bool  TRUE if an object was removed, FALSE if not
+     * @return bool TRUE if an object was removed, FALSE if not
      *
      * @access public
      */
-    function removeAggregateObject($classname)
+    public function removeAggregateObject($classname)
     {
         $ok = false;
         $classname = strtolower($classname);
@@ -177,6 +178,7 @@ class PEAR_Autoloader extends PEAR
                 $ok = true;
             }
         }
+
         return $ok;
     }
 
@@ -189,15 +191,15 @@ class PEAR_Autoloader extends PEAR
      * the call in the right aggregate object and passes on the return
      * value.
      *
-     * @param string $method  which method that was called
+     * @param string $method which method that was called
      *
-     * @param string $args    An array of the parameters passed in the
-     *                        original call
+     * @param string $args An array of the parameters passed in the
+     *                     original call
      *
-     * @return mixed  The return value from the aggregated method, or a PEAR
-     *                error if the called method was unknown.
+     * @return mixed The return value from the aggregated method, or a PEAR
+     *               error if the called method was unknown.
      */
-    function __call($method, $args, &$retval)
+    public function __call($method, $args, &$retval)
     {
         $method = strtolower($method);
         if (empty($this->_method_map[$method]) && isset($this->_autoload_map[$method])) {
@@ -205,8 +207,10 @@ class PEAR_Autoloader extends PEAR
         }
         if (isset($this->_method_map[$method])) {
             $retval = call_user_func_array(array($this->_method_map[$method], $method), $args);
+
             return true;
         }
+
         return false;
     }
 
@@ -214,5 +218,3 @@ class PEAR_Autoloader extends PEAR
 }
 
 overload("PEAR_Autoloader");
-
-?>

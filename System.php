@@ -61,14 +61,14 @@ class System
     /**
      * returns the commandline arguments of a function
      *
-     * @param    string  $argv           the commandline
-     * @param    string  $short_options  the allowed option short-tags
-     * @param    string  $long_options   the allowed option long-tags
-     * @return   array   the given options and there values
+     * @param  string $argv          the commandline
+     * @param  string $short_options the allowed option short-tags
+     * @param  string $long_options  the allowed option long-tags
+     * @return array  the given options and there values
      * @static
      * @access private
      */
-    function _parseArgs($argv, $short_options, $long_options = null)
+    public function _parseArgs($argv, $short_options, $long_options = null)
     {
         if (!is_array($argv) && $argv !== null) {
             /*
@@ -106,17 +106,18 @@ class System
      * Output errors with PHP trigger_error(). You can silence the errors
      * with prefixing a "@" sign to the function call: @System::mkdir(..);
      *
-     * @param mixed $error a PEAR error or a string with the error message
-     * @return bool false
+     * @param  mixed $error a PEAR error or a string with the error message
+     * @return bool  false
      * @static
      * @access private
      */
-    function raiseError($error)
+    public function raiseError($error)
     {
         if (PEAR::isError($error)) {
             $error = $error->getMessage();
         }
         trigger_error($error, E_USER_WARNING);
+
         return false;
     }
 
@@ -137,21 +138,22 @@ class System
      *            [1] => dir1/file3
      *        )
      *    )
-     * @param    string  $sPath      Name of the directory
-     * @param    integer $maxinst    max. deep of the lookup
-     * @param    integer $aktinst    starting deep of the lookup
-     * @param    bool    $silent     if true, do not emit errors.
-     * @return   array   the structure of the dir
+     * @param  string  $sPath   Name of the directory
+     * @param  integer $maxinst max. deep of the lookup
+     * @param  integer $aktinst starting deep of the lookup
+     * @param  bool    $silent  if true, do not emit errors.
+     * @return array   the structure of the dir
      * @static
      * @access   private
      */
-    function _dirToStruct($sPath, $maxinst, $aktinst = 0, $silent = false)
+    public function _dirToStruct($sPath, $maxinst, $aktinst = 0, $silent = false)
     {
         $struct = array('dirs' => array(), 'files' => array());
         if (($dir = @opendir($sPath)) === false) {
             if (!$silent) {
                 System::raiseError("Could not open dir $sPath");
             }
+
             return $struct; // XXX could not open error
         }
 
@@ -183,12 +185,12 @@ class System
     /**
      * Creates a nested array representing the structure of a directory and files
      *
-     * @param    array $files Array listing files and dirs
-     * @return   array
+     * @param  array $files Array listing files and dirs
+     * @return array
      * @static
      * @see System::_dirToStruct()
      */
-    function _multipleToStruct($files)
+    public function _multipleToStruct($files)
     {
         $struct = array('dirs' => array(), 'files' => array());
         settype($files, 'array');
@@ -202,6 +204,7 @@ class System
                 }
             }
         }
+
         return $struct;
     }
 
@@ -209,12 +212,12 @@ class System
      * The rm command for removing files.
      * Supports multiple files and dirs and also recursive deletes
      *
-     * @param    string  $args   the arguments for rm
-     * @return   mixed   PEAR_Error or true for success
+     * @param  string $args the arguments for rm
+     * @return mixed  PEAR_Error or true for success
      * @static
      * @access   public
      */
-    function rm($args)
+    public function rm($args)
     {
         $opts = System::_parseArgs($args, 'rf'); // "f" does nothing but I like it :-)
         if (PEAR::isError($opts)) {
@@ -248,6 +251,7 @@ class System
                 }
             }
         }
+
         return $ret;
     }
 
@@ -255,12 +259,12 @@ class System
      * Make directories.
      *
      * The -p option will create parent directories
-     * @param    string  $args    the name of the director(y|ies) to create
-     * @return   bool    True for success
+     * @param  string $args the name of the director(y|ies) to create
+     * @return bool   True for success
      * @static
      * @access   public
      */
-    function mkDir($args)
+    public function mkDir($args)
     {
         $opts = System::_parseArgs($args, 'pm:');
         if (PEAR::isError($opts)) {
@@ -306,7 +310,7 @@ class System
                 }
             }
         } else {
-            foreach($opts[1] as $dir) {
+            foreach ($opts[1] as $dir) {
                 if ((@file_exists($dir) || !is_dir($dir)) && !mkdir($dir, $mode)) {
                     $ret = false;
                 }
@@ -326,12 +330,12 @@ class System
      *
      * Note: as the class use fopen, urls should work also (test that)
      *
-     * @param    string  $args   the arguments
-     * @return   boolean true on success
+     * @param  string  $args the arguments
+     * @return boolean true on success
      * @static
      * @access   public
      */
-    function &cat($args)
+    public function &cat($args)
     {
         $ret = null;
         $files = array();
@@ -357,6 +361,7 @@ class System
         if (isset($mode)) {
             if (!$outputfd = fopen($outputfile, $mode)) {
                 $err = System::raiseError("Could not open $outputfile");
+
                 return $err;
             }
             $ret = true;
@@ -378,6 +383,7 @@ class System
         if (is_resource($outputfd)) {
             fclose($outputfd);
         }
+
         return $ret;
     }
 
@@ -399,13 +405,13 @@ class System
      *           TMPDIR in Unix will be used. If these vars are also missing
      *           c:\windows\temp or /tmp will be used.
      *
-     * @param   string  $args  The arguments
-     * @return  mixed   the full path of the created (file|dir) or false
+     * @param  string $args The arguments
+     * @return mixed  the full path of the created (file|dir) or false
      * @see System::tmpdir()
      * @static
      * @access  public
      */
-    function mktemp($args = null)
+    public function mktemp($args = null)
     {
         static $first_time = true;
         $opts = System::_parseArgs($args, 't:d');
@@ -458,7 +464,7 @@ class System
      * @static
      * @access private
      */
-    function _removeTmpFiles()
+    public function _removeTmpFiles()
     {
         if (count($GLOBALS['_System_temp_files'])) {
             $delete = $GLOBALS['_System_temp_files'];
@@ -477,7 +483,7 @@ class System
      * @static
      * @return string The temporary directory on the system
      */
-    function tmpdir()
+    public function tmpdir()
     {
         if (OS_WINDOWS) {
             if ($var = isset($_ENV['TMP']) ? $_ENV['TMP'] : getenv('TMP')) {
@@ -492,25 +498,27 @@ class System
             if ($var = isset($_ENV['windir']) ? $_ENV['windir'] : getenv('windir')) {
                 return $var;
             }
+
             return getenv('SystemRoot') . '\temp';
         }
         if ($var = isset($_ENV['TMPDIR']) ? $_ENV['TMPDIR'] : getenv('TMPDIR')) {
             return $var;
         }
+
         return realpath('/tmp');
     }
 
     /**
      * The "which" command (show the full path of a command)
      *
-     * @param string $program The command to search for
+     * @param string $program  The command to search for
      * @param mixed  $fallback Value to return if $program is not found
      *
      * @return mixed A string with the full path or false if not found
      * @static
      * @author Stig Bakken <ssb@php.net>
      */
-    function which($program, $fallback = false)
+    public function which($program, $fallback = false)
     {
         // enforce API
         if (!is_string($program) || '' == $program) {
@@ -555,6 +563,7 @@ class System
                 }
             }
         }
+
         return $fallback;
     }
 
@@ -582,7 +591,7 @@ class System
      * @static
      *
      */
-    function find($args)
+    public function find($args)
     {
         if (!is_array($args)) {
             $args = preg_split('/\s+/', $args, -1, PREG_SPLIT_NO_EMPTY);
@@ -640,8 +649,10 @@ class System
                     $ret[] = $files[$i];
                 }
             }
+
             return $ret;
         }
+
         return $files;
     }
 }
