@@ -93,13 +93,13 @@
  */
 class OS_Guess
 {
-    var $sysname;
-    var $nodename;
-    var $cpu;
-    var $release;
-    var $extra;
+    public $sysname;
+    public $nodename;
+    public $cpu;
+    public $release;
+    public $extra;
 
-    function OS_Guess($uname = null)
+    public function OS_Guess($uname = null)
     {
         list($this->sysname,
              $this->release,
@@ -108,7 +108,7 @@ class OS_Guess
              $this->nodename) = $this->parseSignature($uname);
     }
 
-    function parseSignature($uname = null)
+    public function parseSignature($uname = null)
     {
         static $sysmap = array(
             'HP-UX' => 'hpux',
@@ -185,17 +185,18 @@ class OS_Guess
         if (isset($cpumap[$cpu])) {
             $cpu = $cpumap[$cpu];
         }
+
         return array($sysname, $release, $cpu, $extra, $nodename);
     }
 
-    function _detectGlibcVersion()
+    public function _detectGlibcVersion()
     {
         static $glibc = false;
         if ($glibc !== false) {
             return $glibc; // no need to run this multiple times
         }
         $major = $minor = 0;
-        include_once "System.php";
+        include_once 'System.php';
         // Use glibc's <features.h> header file to
         // get major and minor version number:
         if (@file_exists('/usr/include/features.h') &&
@@ -217,7 +218,7 @@ class OS_Guess
                         continue;
                     }
 
-                    if (strpos($line, '__GLIBC_MINOR__'))  {
+                    if (strpos($line, '__GLIBC_MINOR__')) {
                         // got the minor version number
                         // #define __GLIBC_MINOR__ version
                         $line = preg_split('/\s+/', $line);
@@ -232,6 +233,7 @@ class OS_Guess
                 if (!isset($glibc_major) || !isset($glibc_minor)) {
                     return $glibc = '';
                 }
+
                 return $glibc = 'glibc' . trim($glibc_major) . "." . trim($glibc_minor) ;
             } // no cpp
 
@@ -267,40 +269,41 @@ class OS_Guess
         return $glibc = "glibc{$major}.{$minor}";
     }
 
-    function getSignature()
+    public function getSignature()
     {
         if (empty($this->extra)) {
             return "{$this->sysname}-{$this->release}-{$this->cpu}";
         }
+
         return "{$this->sysname}-{$this->release}-{$this->cpu}-{$this->extra}";
     }
 
-    function getSysname()
+    public function getSysname()
     {
         return $this->sysname;
     }
 
-    function getNodename()
+    public function getNodename()
     {
         return $this->nodename;
     }
 
-    function getCpu()
+    public function getCpu()
     {
         return $this->cpu;
     }
 
-    function getRelease()
+    public function getRelease()
     {
         return $this->release;
     }
 
-    function getExtra()
+    public function getExtra()
     {
         return $this->extra;
     }
 
-    function matchSignature($match)
+    public function matchSignature($match)
     {
         $fragments = is_array($match) ? $match : explode('-', $match);
         $n = count($fragments);
@@ -317,15 +320,18 @@ class OS_Guess
         if ($n > 3) {
             $matches += $this->_matchFragment($fragments[3], $this->extra);
         }
+
         return ($matches == $n);
     }
 
-    function _matchFragment($fragment, $value)
+    public function _matchFragment($fragment, $value)
     {
         if (strcspn($fragment, '*?') < strlen($fragment)) {
             $reg = '/^' . str_replace(array('*', '?', '/'), array('.*', '.', '\\/'), $fragment) . '\\z/';
+
             return preg_match($reg, $value);
         }
+
         return ($fragment == '*' || !strcasecmp($fragment, $value));
     }
 
